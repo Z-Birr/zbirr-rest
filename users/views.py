@@ -151,18 +151,21 @@ def transfer(request):
 @permission_classes([IsAuthenticated])
 def initialize(request):
     user = User.objects.get(username=request.user)
-    balance = Balance()
-    balance.user = user
-    balance.currentBalance = 0.0
-    balance.save()
+    try:
+        Balance.objects.get(user=user)
+    except:
+        balance = Balance()
+        balance.user = user
+        balance.currentBalance = 0.0
+        balance.save()
 
-    transaction = Transactions()
-    transaction.sender = user
-    transaction.reciever = user
-    transaction.senderBalance = 0.0
-    transaction.recieverBalance = 0.0
-    transaction.amount = 0.0
-    transaction.save()
+        transaction = Transactions()
+        transaction.sender = User.objects.get(user='zbirr')
+        transaction.reciever = user
+        transaction.senderBalance = 0.0
+        transaction.recieverBalance = 0.0
+        transaction.amount = 0.0
+        transaction.save()
     return Response({"status": "initialized"})
 
 @api_view(['GET'])
