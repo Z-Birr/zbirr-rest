@@ -9,6 +9,7 @@ from users.serializers import BalanceSerializer, TransactionsSerializer, UsersSe
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from decimal import Decimal
+from django.db.models import Q
 @api_view(['GET', 'POST'])
 def all_users(request):
     if (request.method == 'GET'):
@@ -170,17 +171,15 @@ def initialize(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def transactionTable(request):
-    list = []
+def transactionTable(request, lastIndex):
     user = User.objects.get(username=request.user)
-    transactions = Transactions.objects.order_by('-date').filter(reciever=user)
-    list.extend(transactions)
-    transactions = Transactions.objects.order_by('-date').filter(sender=user)
-    list.extend(transactions)
-    serializer = TransactionsSerializer(list, many=True)
-
-    return Response({"transactions":serializer.data})
-
+    transactions = Transactions.objects.order_by('date').filter(Q(reciever=user)|Q(sender=user))
+    transactions = transactions[lastIndex:]
+    if transactions.__len__() > 0:
+        serializer = TransactionsSerializer(transactions, many=True)
+        return Response({"transactions":serializer.data})
+    else:
+        return Response({"transactions": "up to date"})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def currentBalance(request):

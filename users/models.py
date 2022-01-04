@@ -12,4 +12,3 @@ class Transactions(models.Model):
 class Balance(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     currentBalance = models.DecimalField(max_digits=10, decimal_places=2)
-    initialized = models.BooleanField(default=False)

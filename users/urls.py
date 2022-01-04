@@ -13,6 +13,6 @@ urlpatterns = [
     path('rest-auth/', include('rest_auth.urls')),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('initialize/', views.initialize, name="initialize"),
-    path('transactiontable/', views.transactionTable, name="transactionTable"),
+    path('transactiontable/<int:lastIndex>/', views.transactionTable, name="transactionTable"),
     path('currentbalance/', views.currentBalance, name="currentBalance")
 ]
