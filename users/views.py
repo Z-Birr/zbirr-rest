@@ -184,11 +184,11 @@ def transactionTable(request, lastIndex):
             if (transactions[i].sender == request.user):
                 sender = True
                 user = User.objects.get(username=transactions[i].reciever)
-                amount = transactions[i].recieverBalance
+                amount = transactions[i].senderBalance
             else:
                 sender = False
                 user = User.objects.get(username=transactions[i].sender)
-                amount = transactions[i].senderBalance
+                amount = transactions[i].recieverBalance
             
             list.append({"uid": user.username, "sender": sender, "date": transactions[i].date, "amount": amount, "fullName": user.first_name + " " + user.last_name})
         return Response({"transactions":list})
