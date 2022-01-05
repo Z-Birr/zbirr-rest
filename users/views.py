@@ -175,9 +175,23 @@ def transactionTable(request, lastIndex):
     user = User.objects.get(username=request.user)
     transactions = Transactions.objects.order_by('date').filter(Q(reciever=user)|Q(sender=user))
     transactions = transactions[lastIndex:]
+    
+    print(transactions.__len__())
+    
     if transactions.__len__() > 0:
-        serializer = TransactionsSerializer(transactions, many=True)
-        return Response({"transactions":serializer.data})
+        list = []
+        for i in range(transactions.__len__()):
+            if (transactions[i].sender == request.user):
+                sender = True
+                user = User.objects.get(username=transactions[i].reciever)
+                amount = transactions[i].recieverBalance
+            else:
+                sender = False
+                user = User.objects.get(username=transactions[i].sender)
+                amount = transactions[i].senderBalance
+            
+            list.append({"uid": user.username, "sender": sender, "date": transactions[i].date, "amount": amount, "fullName": user.first_name + " " + user.last_name})
+        return Response({"transactions":list})
     else:
         return Response({"transactions": "up to date"})
 @api_view(['GET'])
