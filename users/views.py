@@ -174,7 +174,7 @@ def initialize(request):
 def transactionTable(request, lastIndex):
     user = User.objects.get(username=request.user)
     transactions = Transactions.objects.order_by('date').filter(Q(reciever=user)|Q(sender=user))
-    transactions = transactions[lastIndex:]
+    transactions = transactions[lastIndex:transactions.__len__()-1]
     
     print(transactions.__len__())
     
